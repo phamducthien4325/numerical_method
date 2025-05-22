@@ -1,0 +1,6 @@
+**/__pycache__/
+.excalidraw
+.vscode/
+.ppt_venv/
+image_interpolation/
+Image_Interpolation/
