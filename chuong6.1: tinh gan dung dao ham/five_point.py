@@ -91,6 +91,8 @@ def error_bound(f5prime, x, a: float, b: float) -> float:
     mi, ma = find_min_max(f5prime, x, a, b)
     y_min = (mi[1])
     y_max = (ma[1])
+    if y_min > y_max:
+        y_min, y_max = y_max, y_min
     return y_min, y_max
 
 def f(x):
@@ -102,9 +104,9 @@ def f(x):
 
 if __name__ == '__main__':
     x = [-3.0, -2.8, -2.6, -2.4, -2.2, -2.0]
-    fx = [9.367879, 8.233241, 7.180350, 6.209329, 5.320305, 4.513417]
+    fx = [16.08554, 12.64465, 9.863738, 7.623176, 5.825013, 4.389056]
     y = sp.symbols('y')
-    fy = sp.exp(y / 3) + y**2
+    fy = sp.exp(-y) - 1 + y
     fprime = sp.diff(fy, y)
     f5prime = sp.diff(fy, y, 5)
     h = x[1] - x[0]
