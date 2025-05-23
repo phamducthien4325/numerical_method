@@ -98,9 +98,9 @@ def mid_point_2(fxmh: float, fxh: float, x0: float, h: float) -> float:
 #     return res_min.fun, res_max.fun
 
 if __name__ == '__main__':
-    x = [8.1, 8.3, 8.5, 8.7]
-    fx = [16.94410, 17.56492, 18.19056, 18.82091]
-    h = 0.2
+    x = [2.0, 2.1, 2.2, 2.3]
+    fx = [3.6887983, 3.6905701, 3.6688192, 3.6245909]
+    h = 0.1
     for i in range(len(x)):
         x0 = x[i]
         fx0 = fx[i]
@@ -120,7 +120,7 @@ if __name__ == '__main__':
             fxmh = fx[i - 1]
             print("Mid point formula")
             f_prime = mid_point_2(fxmh, fxh, x0, h)
-        print(f"f'({x0}) = {f_prime:.4f}")
+        print(f"f'({x0}) = {f_prime}")
     # print(f"Error: {error(fprime, 0.5, f_prime):.4f}")
     # a, b = error_bound(abs_f2prime, x0, x0 + h)
     # a = abs(h / 2 * a)
