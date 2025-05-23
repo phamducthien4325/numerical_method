@@ -17,6 +17,32 @@ def trapezoidal(f, a: float, b: float, n: int) -> float:
     h = (b - a) / n
     return h / 2 * (f(a) + 2 * sum(f(a + j * h) for j in range(1, n)) + f(b))
 
+def find_min_max(f, x, a: float, b: float):
+    f_prime = sp.diff(f, x)
+    critical_points = sp.solve(f_prime, x)
+    domain_points = [pt for pt in critical_points if pt.is_real and a <= pt <= b]
+    domain_points.extend([a, b])
+    values = [(pt, f.subs(x, pt).evalf()) for pt in domain_points]
+    min_point, min_val = min(values, key=lambda t: t[1])
+    max_point, max_val = max(values, key=lambda t: t[1])
+    
+    return min_val, max_val
+
+def error_bound(f, x, a: float, b: float, n: int) -> float:
+    """
+    :param f: function to be integrated
+    :param a: lower limit of integration
+    :param b: upper limit of integration
+    :param n: number of subintervals
+    :return: error bound of the integral
+    """
+    if a > b:
+        a, b = b, a
+    h = (b - a) / n
+    f_2prime = sp.diff(f, x, 2)
+    Min, Max = find_min_max(f_2prime, x, a, b)
+    return Min, Max
+
 if __name__ == "__main__":
     x = sp.symbols('x')
     f = x ** 4
@@ -27,3 +53,7 @@ if __name__ == "__main__":
     integ = trapezoidal(sp.lambdify(x, f), a, b, n)
     print(f"Trapezoidal Rule: {integ}")
     print(f"Error: {abs(sp.integrate(f, (x, a, b)) - integ)}")
+    Min, Max = error_bound(f, x, a, b, n)
+    Min = (b - a) * h ** 2 / 12 * Min
+    Max = (b - a) * h ** 2 / 12 * Max
+    print(f"Error Bound: [{Min:.7f}, {Max:.7f}]")
