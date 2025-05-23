@@ -54,53 +54,53 @@ def mid_point_2(fxmh: float, fxh: float, x0: float, h: float) -> float:
     """
     return (1 / (2 * h)) * (-fxmh + fxh)
 
-# def fx(x):
-#     """
-#     :param x: point to be derived
-#     :return: f(x)
-#     """
-#     return x ** 2 * math.log(x) + 1
+def fx(x):
+    """
+    :param x: point to be derived
+    :return: f(x)
+    """
+    return x ** 2 * math.log(x) + 1
 
-# def fprime(x):
-#     """
-#     :param x: point to be derived
-#     :return: f'(x)
-#     """
-#     return 2 * x * math.log(x) + 1
+def fprime(x):
+    """
+    :param x: point to be derived
+    :return: f'(x)
+    """
+    return 2 * math.e ** (2 * x)
 
-# def abs_f2prime(x):
-#     """
-#     :param x: point to be derived
-#     :return: |f''(x)|
-#     """
-#     return abs(2 * math.log(x) + 3)
+def abs_f3prime(x):
+    """
+    :param x: point to be derived
+    :return: |f''(x)|
+    """
+    return 8 * math.e ** (2 * x)
 
-# def error(f, x0: float, fx0: float) -> float:
-#     """
-#     :param f: function to be derived
-#     :param x0: point to be derived
-#     :param fx0: f(x0)
-#     :return: error of f'(x0)
-#     """
-#     return abs(f(x0) - fx0)
+def error(f, x0: float, fx0: float) -> float:
+    """
+    :param f: function to be derived
+    :param x0: point to be derived
+    :param fx0: f(x0)
+    :return: error of f'(x0)
+    """
+    return abs(f(x0) - fx0)
 
-# def error_bound(f2prime, a: float, b: float) -> float:
-#     """
-#     :param f2prime: second derivative of f
-#     :param a: left bound
-#     :param b: right bound
-#     :return: error bound of f'(x0)
-#     """
-#     if a > b:
-#         a, b = b, a
-#     res_min = minimize_scalar(f2prime, bounds=(a, b), method='bounded')
-#     res_max = minimize_scalar(lambda x: -f2prime(x), bounds=(a, b), method='bounded')
-#     return res_min.fun, res_max.fun
+def error_bound(f3prime, a: float, b: float) -> float:
+    """
+    :param f2prime: second derivative of f
+    :param a: left bound
+    :param b: right bound
+    :return: error bound of f'(x0)
+    """
+    if a > b:
+        a, b = b, a
+    res_min = minimize_scalar(f3prime, bounds=(a, b), method='bounded')
+    res_max = minimize_scalar(lambda x: -f3prime(x), bounds=(a, b), method='bounded')
+    return res_min.fun, res_max.fun
 
 if __name__ == '__main__':
-    x = [2.0, 2.1, 2.2, 2.3]
-    fx = [3.6887983, 3.6905701, 3.6688192, 3.6245909]
-    h = 0.1
+    x = [1.1, 1.2, 1.3, 1.4]
+    fx = [9.025013, 11.02318, 13.46374, 16.44465]
+    h = x[1] - x[0]
     for i in range(len(x)):
         x0 = x[i]
         fx0 = fx[i]
@@ -121,8 +121,13 @@ if __name__ == '__main__':
             print("Mid point formula")
             f_prime = mid_point_2(fxmh, fxh, x0, h)
         print(f"f'({x0}) = {f_prime}")
-    # print(f"Error: {error(fprime, 0.5, f_prime):.4f}")
-    # a, b = error_bound(abs_f2prime, x0, x0 + h)
-    # a = abs(h / 2 * a)
-    # b = abs(h / 2 * b)
-    # print(f"Error bound: [{a:.4f}, {b:.4f}]")
+        print(f"Error: {error(fprime, x[i], f_prime)}")
+        if i == 0 or i == len(x) - 1:
+            a, b = error_bound(abs_f3prime, x0, x0 + 2 * h)
+            a = abs(h ** 2 / 3 * a)
+            b = abs(h ** 2 / 3 * b)
+        else:
+            a, b = error_bound(abs_f3prime, x0 - h, x0 + h)
+            a = abs(h ** 2 / 6 * a)
+            b = abs(h ** 2 / 6 * b)
+        print(f"Error bound: [{a:.4f}, {b:.4f}]")
