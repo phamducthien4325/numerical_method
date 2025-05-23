@@ -31,21 +31,21 @@ def fx(x):
     :param x: point to be derived
     :return: f(x)
     """
-    return x ** 2 * math.log(x) + 1
+    return math.sin(x)
 
 def fprime(x):
     """
     :param x: point to be derived
     :return: f'(x)
     """
-    return 2 * x * math.log(x) + 1
+    return math.cos(x)
 
 def abs_f2prime(x):
     """
     :param x: point to be derived
     :return: |f''(x)|
     """
-    return abs(2 * math.log(x) + 3)
+    return abs(math.sin(x))
 
 def error(f, x0: float, fx0: float) -> float:
     """
@@ -70,14 +70,24 @@ def error_bound(f2prime, a: float, b: float) -> float:
     return res_min.fun, res_max.fun
 
 if __name__ == '__main__':
-    x0 = 1.2
-    fx0 = 1.2625
-    h = 0.2
-    fxh = 1.6595
-    f_prime = forward_difference_2(fx0, fxh, x0, h)
-    print(f"f'({x0}) = {f_prime:.4f}")
-    print(f"Error: {error(fprime, 0.5, f_prime):.4f}")
-    a, b = error_bound(abs_f2prime, x0, x0 + h)
-    a = abs(h / 2 * a)
-    b = abs(h / 2 * b)
-    print(f"Error bound: [{a:.4f}, {b:.4f}]")
+    x = [0.5, 0.6, 0.7]
+    fx = [0.4794, 0.5646, 0.6442]
+    h = x[1] - x[0]
+    for i in range(len(x) - 1):
+        print("Forward difference:")
+        f_prime = forward_difference_2(fx[i], fx[i + 1], x[i], h)
+        print(f"f'({x[i]}) = {f_prime}")
+        print(f"Error: {error(fprime, x[i], f_prime):.4f}")
+        a, b = error_bound(abs_f2prime, x[i], x[i] + h)
+        a = abs(h / 2 * a)
+        b = abs(h / 2 * b)
+        print(f"Error bound: [{a:.4f}, {b:.4f}]")
+    for i in range(len(x) - 1, 1, -1):
+        print("Backward difference:")
+        f_prime = forward_difference_2(fx[i], fx[i - 1], x[i], -h)
+        print(f"f'({x[i]}) = {f_prime}")
+        print(f"Error: {error(fprime, x[i], f_prime):.4f}")
+        a, b = error_bound(abs_f2prime, x[i] - h, x[i])
+        a = abs(h / 2 * a)
+        b = abs(h / 2 * b)
+        print(f"Error bound: [{a:.4f}, {b:.4f}]")
