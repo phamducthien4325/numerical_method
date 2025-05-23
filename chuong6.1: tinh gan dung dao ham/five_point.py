@@ -86,25 +86,25 @@ def f(x):
     :param x: point to be derived
     :return: f(x)
     """
-    return math.tan(x)
+    return math.e ** (x / 3) + x ** 2
 
 def fprime(x):
     """
     :param x: point to be derived
     :return: f'(x)
     """
-    return 1 / (math.cos(x) ** 2)
+    return 1 / 3 * math.e ** (x / 3) + 2 * x
 
 def abs_f5prime(x):
     """
     :param x: point to be derived
     :return: |f'''(x)|
     """
-    return abs(24 * 1 / math.cos(x) ** 2 * math.tan(x) ** 4 + 48 * 1 / math.cos(x) **4 * math.tan(x) ** 2 + 8 * 1 / math.cos(x) ** 6)
+    return abs(1 / 243) * math.e ** (x / 3)
 
 if __name__ == '__main__':
-    x = [2.1, 2.2, 2.3, 2.4, 2.5, 2.6]
-    fx = [-1.709847, -1.373823, -1.119214, -0.9160143, -0.7470223, -0.6015966]
+    x = [-3.0, -2.8, -2.6, -2.4, -2.2, -2.0]
+    fx = [9.367879, 8.233241, 7.180350, 6.209329, 5.320305, 4.513417]
     h = x[1] - x[0]
     for i in range(len(x)):
         x0 = x[i]
