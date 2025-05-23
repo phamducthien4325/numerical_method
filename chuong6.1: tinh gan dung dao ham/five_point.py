@@ -1,5 +1,6 @@
 from scipy.optimize import minimize_scalar
 import math
+import sympy as sp
 
 # 5 End point formula
 #  _______________________________________________________________________________________________________________
@@ -59,16 +60,26 @@ def five_mid_point_2(fxm2h: float, fxmh: float, fxh: float, fx2h: float, x0: flo
     """
     return (1 / (12 * h)) * (fxm2h - 8 * fxmh + 8 * fxh - fx2h)
 
-def error(f, x0: float, fx0: float) -> float:
+def error(n: float, n_pred: float) -> float:
     """
-    :param f: function to be derived
-    :param x0: point to be derived
-    :param fx0: f(x0)
+    :param n: true value
+    :param n_pred: predicted value
     :return: error of f'(x0)
     """
-    return abs(f(x0) - fx0)
+    return abs(n - n_pred)
 
-def error_bound(f5prime, a: float, b: float) -> float:
+def find_min_max(f, x, a, b):
+    f_prime = sp.diff(f, x)
+    critical_points = sp.solve(f_prime, x)
+    domain_points = [pt for pt in critical_points if pt.is_real and a <= pt <= b]
+    domain_points.extend([a, b])
+    values = [(pt, f.subs(x, pt).evalf()) for pt in domain_points]
+    min_point, min_val = min(values, key=lambda t: t[1])
+    max_point, max_val = max(values, key=lambda t: t[1])
+    
+    return (min_point, min_val), (max_point, max_val)
+
+def error_bound(f5prime, x, a: float, b: float) -> float:
     """
     :param f2prime: second derivative of f
     :param a: left bound
@@ -77,34 +88,25 @@ def error_bound(f5prime, a: float, b: float) -> float:
     """
     if a > b:
         a, b = b, a
-    res_min = minimize_scalar(f5prime, bounds=(a, b), method='bounded')
-    res_max = minimize_scalar(lambda x: -f5prime(x), bounds=(a, b), method='bounded')
-    return res_min.fun, res_max.fun
+    mi, ma = find_min_max(f5prime, x, a, b)
+    y_min = (mi[1])
+    y_max = (ma[1])
+    return y_min, y_max
 
 def f(x):
     """
     :param x: point to be derived
     :return: f(x)
     """
-    return math.e ** (x / 3) + x ** 2
-
-def fprime(x):
-    """
-    :param x: point to be derived
-    :return: f'(x)
-    """
-    return 1 / 3 * math.e ** (x / 3) + 2 * x
-
-def abs_f5prime(x):
-    """
-    :param x: point to be derived
-    :return: |f'''(x)|
-    """
-    return abs(1 / 243) * math.e ** (x / 3)
+    return math.tan(x)
 
 if __name__ == '__main__':
     x = [-3.0, -2.8, -2.6, -2.4, -2.2, -2.0]
     fx = [9.367879, 8.233241, 7.180350, 6.209329, 5.320305, 4.513417]
+    y = sp.symbols('y')
+    fy = sp.exp(y / 3) + y**2
+    fprime = sp.diff(fy, y)
+    f5prime = sp.diff(fy, y, 5)
     h = x[1] - x[0]
     for i in range(len(x)):
         x0 = x[i]
@@ -131,17 +133,17 @@ if __name__ == '__main__':
             print("5 Mid point formula")
             f_prime = five_mid_point_2(fxm2h, fxmh, fxh, fx2h, x0, h)
         print(f"f'({x0}) = {f_prime}")
-        print(f"Error: {error(fprime, x[i], f_prime)}")
+        print(f"Error: {error(fprime.subs({y: x0}), f_prime)}")
         if i == 0 or i == 1:
-            a, b = error_bound(abs_f5prime, x0, x0 + 4 * h)
+            a, b = error_bound(f5prime, y, x0, x0 + 4 * h)
             a = abs((h ** 4) / 5 * a)
             b = abs((h ** 4) / 5 * b)
         elif i == len(x) - 1 or i == len(x) - 2:
-            a, b = error_bound(abs_f5prime, x0 - 4 * h, x0)
+            a, b = error_bound(f5prime, y, x0 - 4 * h, x0)
             a = abs((h ** 4) / 5 * a)
             b = abs((h ** 4) / 5 * b)
         else:
-            a, b = error_bound(abs_f5prime, x0 - h, x0 + h)
+            a, b = error_bound(f5prime, y, x0 - h, x0 + h)
             a = abs((h ** 4) / 30 * a)
             b = abs((h ** 4)/ 30 * b)
         print(f"Error bound: [{a:.7f}, {b:.7f}]")
