@@ -1,3 +1,9 @@
+#  __________________
+# |                 | 
+# |xi = g(x(i - 1)) | DK hoi tu: |g'(x0)| < 1 voi x0 ∈ [a, b]
+# |                 | 
+# |_________________| 
+
 from typing import Optional
 import math
 
@@ -18,7 +24,7 @@ def fixed_point_iteration(g,
     return None
 
 def g1(x: float) -> float:
-    return 5 ** (-x)
+    return math.cos(x)
 
 if __name__ == "__main__":
-    print(fixed_point_iteration(g1, 4, tol=1e-5, max_iter=10000000))
+    print(fixed_point_iteration(g1, 1.5, tol=1e-5, max_iter=10000000))

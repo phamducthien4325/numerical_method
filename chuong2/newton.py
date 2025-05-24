@@ -1,5 +1,12 @@
+#  __________________________
+# |                 f(xi)   | 
+# |x(i + 1) = xi - -------- | chon x0 sao cho f(x0) * f''(x0) < 0
+# |                 f'(xi)  | 
+# |_________________________| 
+
 from typing import Optional
 import math
+import sympy as sp
 
 # Con goi la phuong phap tiep tuyen
 def newton(f,
@@ -27,5 +34,18 @@ def g1(x: float) -> float:
 def g1_prime(x: float) -> float:
     return 1 - 0.2 * math.cos(x)
 
+def find_x0(f, f_2prime, a: float, b: float) -> float:
+    if f(a) * f_2prime(a) > 0:
+        return a
+    else:
+        return b
+
 if __name__ == "__main__":
-    print(newton(g1, g1_prime, math.pi / 2, tol=1e-5, max_iter=1000000))
+    x = sp.symbols('x')
+    f = x ** 3 - 2 * x ** 2 - 5
+    a = 1
+    b = 4
+    f_prime = sp.diff(f, x)
+    f_2prime = sp.diff(f_prime, x)
+    x0 = find_x0(sp.lambdify(x, f), sp.lambdify(x, f_2prime), a, b)
+    print(newton(sp.lambdify(x, f), sp.lambdify(x, f_prime), x0, tol=1e-5, max_iter=1000000))

@@ -77,9 +77,9 @@ def error_bound(f, x, a: float, b: float, n: int) -> float:
 
 if __name__ == "__main__":
     x = sp.symbols('x')
-    f = x**4
-    a = 0.5
-    b = 1
+    f = 1/(x * sp.ln(x))
+    a = math.e
+    b = math.e + 1
     n = 0
     h = (b - a) / (n + 2)
     integ = midpoint(sp.lambdify(x, f), a, b, n)
