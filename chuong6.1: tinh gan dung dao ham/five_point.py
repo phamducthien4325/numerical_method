@@ -68,16 +68,19 @@ def error(n: float, n_pred: float) -> float:
     """
     return abs(n - n_pred)
 
-def find_min_max(f, x, a, b):
+def find_abs_min_max(f, x, a: float, b: float):
     f_prime = sp.diff(f, x)
     critical_points = sp.solve(f_prime, x)
-    domain_points = [pt for pt in critical_points if pt.is_real and a <= pt <= b]
+    zero_points = sp.solve(f, x)
+    def is_valid(pt):
+        return pt.is_real and a <= float(pt.evalf()) <= b
+    domain_points = [pt for pt in critical_points + zero_points if is_valid(pt)]
     domain_points.extend([a, b])
-    values = [(pt, f.subs(x, pt).evalf()) for pt in domain_points]
+    domain_points = list(set(domain_points))
+    values = [(pt, sp.Abs(f).subs(x, pt).evalf()) for pt in domain_points]
     min_point, min_val = min(values, key=lambda t: t[1])
     max_point, max_val = max(values, key=lambda t: t[1])
-    
-    return (min_point, min_val), (max_point, max_val)
+    return min_val, max_val
 
 def error_bound(f5prime, x, a: float, b: float) -> float:
     """
@@ -88,7 +91,7 @@ def error_bound(f5prime, x, a: float, b: float) -> float:
     """
     if a > b:
         a, b = b, a
-    mi, ma = find_min_max(f5prime, x, a, b)
+    mi, ma = find_abs_min_max(f5prime, x, a, b)
     y_min = (mi[1])
     y_max = (ma[1])
     if y_min > y_max:
