@@ -1,14 +1,14 @@
-#  Cong thuc Composite Trapezoidal Rule, khi n = 1 thi cong thuc tro thanh Trapezoidal Rule
-#  ____________________________________________________________________________________
-# |                      h                 n-1               (b - a) * h^2            | ξ ∈ (a, b)
-# |∫[a to b] f(x) dx  = --- * [f(a) + 2 *   Σ f(xj)+ f(b)] - --------------- * f''(ξ) | h = (b - a) / n
-# |                      2                 j=1                     12                 | xj = a + j * h
-# |___________________________________________________________________________________| j = 0, 1, 2, ..., n
+#  Cong thuc Composite Simpson Rule, khi n = 2 thi cong thuc tro thanh Trapezoidal Rule
+#  _______________________________________________________________________________________________________________________
+# |                      h    [           ⎛(n/2)-1       ⎞       ⎛(n/2)          ⎞        ]    (b - a) * h^4             | ξ ∈ (a, b)
+# |∫[a to b] f(x) dx  = --- * [f(a) + 2 * ⎜   Σ    f(x2j)⎟ + 4 * ⎜  Σ  f(x(2j-1))⎟  + f(b)] - --------------- * f''''(ξ) | h = (b - a) / n
+# |                      3    [           ⎝  j=1         ⎠       ⎝ j=1           ⎠        ]         180                  | xj = a + j * h
+# |______________________________________________________________________________________________________________________| j = 0, 1, 2, ..., n
 import sympy as sp
 import math
 from scipy.optimize import minimize_scalar
 
-def trapezoidal(f, a: float, b: float, n: int) -> float:
+def simpson(f, a: float, b: float, n: int) -> float:
     """
     :param f: function to be integrated
     :param a: lower limit of integration
@@ -17,7 +17,8 @@ def trapezoidal(f, a: float, b: float, n: int) -> float:
     :return: approximate value of the integral
     """
     h = (b - a) / n
-    return h / 2 * (f(a) + 2 * sum(f(a + j * h) for j in range(1, n)) + f(b))
+    return h / 3 * (f(a) + 2 * sum(f(a + 2 * j * h) for j in range(1, n // 2)) +
+                   4 * sum(f(a + (2 * j - 1) * h) for j in range(1, n // 2 + 1)) + f(b))
 
 def find_min_max_scipy(f, a: float, b: float) -> float:
     """
@@ -68,8 +69,8 @@ def error_bound(f, x, a: float, b: float, n: int) -> float:
     if a > b:
         a, b = b, a
     h = (b - a) / n
-    f_2prime = sp.diff(f, x, 2)
-    Min, Max = find_abs_min_max(f_2prime, x, a, b)
+    f_4prime = sp.diff(f, x, 4)
+    Min, Max = find_abs_min_max(f_4prime, x, a, b)
     Min = abs(Min)
     Max = abs(Max)
     if Min > Max:
@@ -83,10 +84,10 @@ if __name__ == "__main__":
     b = math.e + 1
     n = 1
     h = (b - a) / n
-    integ = trapezoidal(sp.lambdify(x, f), a, b, n)
-    print(f"Trapezoidal Rule: {integ}")
+    integ = simpson(sp.lambdify(x, f), a, b, n)
+    print(f"Simpson Rule: {integ}")
     print(f"Error: {abs(sp.integrate(f, (x, a, b)).evalf() - integ)}")
     Min, Max = error_bound(f, x, a, b, n)
-    Min = abs((b - a) * h ** 2 / 12 * Min)
-    Max = abs((b - a) * h ** 2 / 12 * Max)
+    Min = abs((b - a) * h ** 4 / 180 * Min)
+    Max = abs((b - a) * h ** 4 / 180 * Max)
     print(f"Error Bound: [{Min:.7f}, {Max:.7f}]")
