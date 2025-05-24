@@ -1,5 +1,13 @@
+#  _________________________________________
+# |                 f(xi)*(xi - x(i - 1))  | 
+# |x(i + 1) = xi - ---------------------   | 
+# |                 f(xi) - f(x(i - 1))    | 
+# |________________________________________| 
+
+
 from typing import Optional
 import math
+import sympy as sp
 
 def daycung(f,
             p0: float,
@@ -12,7 +20,7 @@ def daycung(f,
     while i < max_iter:
         p = p1 - q1 * (p1 - p0) / (q1 - q0)
         if abs(p - p1) < tol:
-            print("Sau n = {}".format(i))
+            print("Sau n = {}".format(i), end="; ")
             return p
         p0 = p1
         q0 = q1
@@ -22,8 +30,10 @@ def daycung(f,
     print("Khong tim thay nghiem sau n la {} va p la {}".format(max_iter, p1))
     return None
 
-def g1(x: float) -> float:
-    return - x ** 3 - math.cos(x)
-
 if __name__ == "__main__":
-    print(daycung(g1, -1, 0, tol=1e-4, max_iter=3))
+    x = sp.symbols('x')
+    f = x + 1 - 2 * sp.sin(sp.pi * x)
+    a = 0.5
+    b = 1
+    print("Phuong phap day cung:", end="")
+    print(daycung(sp.lambdify(x, f), a, b, tol=1e-7, max_iter=1000000))

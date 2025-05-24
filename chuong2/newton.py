@@ -21,7 +21,7 @@ def newton(f,
             return None
         p = p0 - f(p0) / f_prime(p0)
         if abs(p - p0) < tol:
-            print("Sau n = {}".format(i))
+            print("Sau n = {}".format(i), end="; ")
             return p
         p0 = p
         i += 1
@@ -37,15 +37,20 @@ def g1_prime(x: float) -> float:
 def find_x0(f, f_2prime, a: float, b: float) -> float:
     if f(a) * f_2prime(a) > 0:
         return a
-    else:
+    elif f(b) * f_2prime(b) > 0:
         return b
+    else:
+        print("a, b khong thoa man x0")
+        return None
 
 if __name__ == "__main__":
     x = sp.symbols('x')
-    f = x ** 3 - 2 * x ** 2 - 5
-    a = 1
-    b = 4
+    f = x + 1 - 2 * sp.sin(sp.pi * x)
+    a = 0.5
+    b = 1
     f_prime = sp.diff(f, x)
     f_2prime = sp.diff(f_prime, x)
+    print("Phuong phap newton:", end="")
     x0 = find_x0(sp.lambdify(x, f), sp.lambdify(x, f_2prime), a, b)
-    print(newton(sp.lambdify(x, f), sp.lambdify(x, f_prime), x0, tol=1e-5, max_iter=1000000))
+    print(f"tai x0 = {x0}; ", end="")
+    print(newton(sp.lambdify(x, f), sp.lambdify(x, f_prime), x0, tol=1e-7, max_iter=1000000))

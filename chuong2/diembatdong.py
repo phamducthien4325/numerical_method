@@ -16,7 +16,7 @@ def fixed_point_iteration(g,
     while i < max_iter:
         p = g(p0)
         if abs(p - p0) < tol:
-            print("Sau n = {}".format(i))
+            print("Sau n = {}".format(i), end=";")
             return p
         p0 = p
         i += 1
@@ -24,7 +24,8 @@ def fixed_point_iteration(g,
     return None
 
 def g1(x: float) -> float:
-    return math.cos(x)
+    return  2 * math.sin(math.pi * x) - 1
 
 if __name__ == "__main__":
-    print(fixed_point_iteration(g1, 1.5, tol=1e-5, max_iter=10000000))
+    print("Phuong phap diem bat dong:", end="")
+    print(fixed_point_iteration(g1, 0.25, tol=1e-7, max_iter=10000000))

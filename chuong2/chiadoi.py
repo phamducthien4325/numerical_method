@@ -10,6 +10,7 @@ def bisection(f,
     while i <= max_iter:
         p = a + (b - a) / 2
         if f(p) == 0 or (b - a) / 2 < tol:
+            print(f"n={i}", end = ';')
             return p
         elif f(p) * f(a) < 0:
             b = p
@@ -21,10 +22,11 @@ def bisection(f,
     return None
 
 def func(x: float) -> float:
-    return x ** 3 - x - 1
+    return  + 1- 2 * math.sin(math.pi * x)
 
 if __name__ == "__main__":
-    res = bisection(func, 1, 2, tol=1e-4, max_iter=10000000)
+    print("Phuong phap chia doi:", end="")
+    res = bisection(func, 0, 1.5, tol=1e-7, max_iter=10000000)
     if res != None:
         print(res)
     else:
