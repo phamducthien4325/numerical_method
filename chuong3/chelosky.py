@@ -17,13 +17,25 @@ def cholesky_decomposition(A):
     
     return L
 
-# Ví dụ sử dụng
-A = np.array([[4, 2, 4],
-              [2, 10, 8],
-              [4, 8, 17]], dtype=np.float64)
+def solve_cholesky(A, b):
+    L = cholesky_decomposition(A)
+    y = np.zeros_like(b, dtype=np.float64)
+    for i in range(len(b)):
+        y[i] = (b[i] - np.sum(L[i, :i] * y[:i])) / L[i, i]
+    x = np.zeros_like(y, dtype=np.float64)
+    for i in range(len(y) - 1, -1, -1):
+        x[i] = (y[i] - np.sum(L.T[i, i + 1:] * x[i + 1:])) / L[i, i]
+    return x
 
-L = cholesky_decomposition(A)
-print("Ma trận L:")
-print(L)
-print("Kiểm tra L * L.T:")
-print(np.dot(L, L.T))
+if __name__ == '__main__':
+    A = np.array([
+        [4, 2, 4, 2],
+        [2, 3, 4, 2],
+        [4, 3, 6, 3],
+        [2, 3, 3, 9]
+    ], dtype=float)
+    b = np.array([[20], [36], [60], [122]], dtype=float)
+    x = solve_cholesky(A, b)
+    print("Nghiệm của hệ phương trình:", x.reshape(-1))
+    print("Kiểm tra:")
+    print("Ax - b =", np.dot(A, x.reshape(-1, 1)) - b)

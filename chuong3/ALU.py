@@ -50,10 +50,12 @@ def solve_lu(A, b):
 #     print("Ax - b =", np.dot(A, x) - b)
 
 if __name__ == '__main__':
-    A = np.array([[0.00111, 20, 4],
-         [0, 0.00112, 32],
-         [41, 1, 2]])
-    b = np.array([37,128.0112, 9]).reshape(-1, 1)
+    A = np.array([
+        [9, 6, 12],
+        [6, 13, 11],
+        [12, 11, 26]
+    ], dtype=float)
+    b = np.array([[17.4], [23.6], [30.8]], dtype=float)
     L, U, x = solve_lu(A, b)
     print("L:", L)
     print("U:", U)

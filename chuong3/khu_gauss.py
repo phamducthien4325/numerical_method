@@ -24,8 +24,14 @@ if __name__ == '__main__':
     # n = int(input("Bạn muốn giải hệ phương trình bao nhiêu ẩn? "))
     # A = np.random.rand(n, n)
     # b = np.random.rand(n).reshape(-1, 1)
-    A = np.array([[2, 1], [1, -3]], dtype=float)
-    b = np.array([[-1], [5]], dtype=float)
+    A = np.array([
+        [1, 1, 1, 1, 1],
+        [2, 2, 1, 3, 4],
+        [3, 3, 2, 5, 8],
+        [4, 4, 4, 5, 5],
+        [16, -1, 1, 1, -1]
+    ], dtype=float)
+    b = np.array([[2], [4], [8], [16], [32]], dtype=float)
     print("Ma trận mở rộng Ab:")
     print(np.hstack([A, b]))
     x = gauss(A, b)

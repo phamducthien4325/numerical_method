@@ -8,12 +8,11 @@ def gauss_seidel(A: np.ndarray,
                  tol: float = 1e-3,
                  max_iter: int = 1000000) -> np.ndarray:
     n = len(A)
-
+    b = b.flatten()
     if x0 is None:
         x0 = np.zeros(n, dtype=float64)
-
+    x = x0.copy()
     for m in range(max_iter):
-        x = x0.copy()
         for j in range(n):
             x[j] = (b[j] - np.sum(A[j, :j] * x[:j]) - np.sum(A[j, j + 1:] * x0[j + 1:])) / A[j, j]
         if np.max(np.abs(x - x0)) < tol:
@@ -31,13 +30,20 @@ def generate_diagonally_dominant_system(n, min_val=-10, max_val=10):
     return A, b
 
 if __name__ == '__main__':
-    n = int(input("Bạn muốn giải hệ phương trình bao nhiêu ẩn? "))
-    # A = np.random.rand(n, n)
-    # b = np.random.rand(n).reshape(-1, 1)
-    A, b = generate_diagonally_dominant_system(n)
+    # n = int(input("Bạn muốn giải hệ phương trình bao nhiêu ẩn? "))
+    # # A = np.random.rand(n, n)
+    # # b = np.random.rand(n).reshape(-1, 1)
+    # A, b = generate_diagonally_dominant_system(n)
+    A = np.array([
+        [3, -1, 1],
+        [3, 6, 2],
+        [3, 3, 7]
+    ], dtype=float)
+    b = np.array([[1], [0], [4]], dtype=float)
+
     print("Ma trận mở rộng Ab:")
     print(np.hstack([A, b]))
-    x = gauss_seidel(A, b, np.zeros(n, np.float64))  
+    x = gauss_seidel(A, b, np.zeros(len(A), np.float64))  
     print("Nghiệm của hệ phương trình:", x)
     print("Kiểm tra:")
     print("Ax - b =", np.dot(A, x.reshape(-1, 1)) - b)
