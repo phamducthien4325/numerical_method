@@ -1,14 +1,14 @@
-#  Cong thuc Composite Simpson Rule, khi n = 2 thi cong thuc tro thanh Trapezoidal Rule
-#  _______________________________________________________________________________________________________________________
-# |                      h    [           ⎛(n/2)-1       ⎞       ⎛(n/2)          ⎞        ]    (b - a) * h^4             | ξ ∈ (a, b)
-# |∫[a to b] f(x) dx  = --- * [f(a) + 2 * ⎜   Σ    f(x2j)⎟ + 4 * ⎜  Σ  f(x(2j-1))⎟  + f(b)] - --------------- * f''''(ξ) | h = (b - a) / n
-# |                      3    [           ⎝  j=1         ⎠       ⎝ j=1           ⎠        ]         180                  | xj = a + j * h
-# |______________________________________________________________________________________________________________________| j = 0, 1, 2, ..., n
+#  Cong thuc Composite Midpoint Rule cho n + 2 subinterval, khi n = 0 thi cong thuc tro thanh Midpoint Rule
+#  _____________________________________________________________________
+# |                          ⎛  n/2       ⎞    (b - a) * h^2           | ξ ∈ (a, b); n is even
+# |∫[a to b] f(x) dx  = 2h * ⎜   Σ  f(x2j)⎟ + --------------- * f''(ξ) | h = (b - a) / (n + 2)
+# |                          ⎝  j=0       ⎠         6                  | xj = a + (j + 1) * h
+# |____________________________________________________________________| j = -1, 0, 1, 2, ..., n + 1
 import sympy as sp
 import math
 from scipy.optimize import minimize_scalar
 
-def simpson(f, a: float, b: float, n: int) -> float:
+def midpoint(f, a: float, b: float, n: int) -> float:
     """
     :param f: function to be integrated
     :param a: lower limit of integration
@@ -16,10 +16,9 @@ def simpson(f, a: float, b: float, n: int) -> float:
     :param n: number of subintervals
     :return: approximate value of the integral
     """
-    h = (b - a) / n
-    return h / 3 * (f(a) + 2 * sum(f(a + 2 * j * h) for j in range(1, n // 2)) +
-                   4 * sum(f(a + (2 * j - 1) * h) for j in range(1, n // 2 + 1)) + f(b))
-
+    h = (b - a) / (n + 2)
+    return 2 * h * sum(f(a + (2 * j + 1) * h) for j in range(n // 2 + 1))
+                    
 def find_min_max_scipy(f, a: float, b: float) -> float:
     """
     :param f2prime: second derivative of f
@@ -68,9 +67,8 @@ def error_bound(f, x, a: float, b: float, n: int) -> float:
     """
     if a > b:
         a, b = b, a
-    h = (b - a) / n
-    f_4prime = sp.diff(f, x, 4)
-    Min, Max = find_abs_min_max(f_4prime, x, a, b)
+    f_2prime = sp.diff(f, x, 2)
+    Min, Max = find_abs_min_max(f_2prime, x, a, b)
     Min = abs(Min)
     Max = abs(Max)
     if Min > Max:
@@ -82,12 +80,12 @@ if __name__ == "__main__":
     f = x**4
     a = 0.5
     b = 1
-    n = 2
-    h = (b - a) / n
-    integ = simpson(sp.lambdify(x, f), a, b, n)
-    print(f"Simpson Rule: {integ}")
+    n = 0
+    h = (b - a) / (n + 2)
+    integ = midpoint(sp.lambdify(x, f), a, b, n)
+    print(f"Midpoint Rule: {integ}")
     print(f"Error: {abs(sp.integrate(f, (x, a, b)).evalf() - integ)}")
     Min, Max = error_bound(f, x, a, b, n)
-    Min = abs((b - a) * h ** 4 / 180 * Min)
-    Max = abs((b - a) * h ** 4 / 180 * Max)
+    Min = abs((b - a) * h ** 2 / 6 * Min)
+    Max = abs((b - a) * h ** 2 / 6 * Max)
     print(f"Error Bound: [{Min:.10f}, {Max:.10f}]")
