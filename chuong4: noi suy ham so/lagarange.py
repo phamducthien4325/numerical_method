@@ -83,14 +83,15 @@ if __name__ == '__main__':
     #     fx.append(float(input(f'f(x[{i}]): ')))
     # x0 = float(input('Nhap x0: '))
     x = sp.Symbol('x')
-    # f = math.e ** (2 * x) - x
-    xi = [8.1, 8.3, 8.6, 8.7]
+    f = sp.ln(sp.exp(x) + 2)
+    xi = [-1.0, -0.5, 0.0, 0.5]
     # fi = [f.subs(x, i).evalf() for i in xi]
-    fi = [16.94410, 17.56492, 18.50515, 18.82091]
-    n = 3  # Degree of polynomial
-    x0 = 8.4
-    lagarange_val = lagarange(xi[:n + 1], fi, x0)
-    print(f'{n} degree f({x0}) = {lagarange_val}')
-    # print(f'Absolute error: {abs(f.subs(x, x0).evalf() - lagarange_val)}')
-    # Min, Max = error_bound(f, x, x0, xi[:n + 1])
-    # print(f'Error bound: [{Min}, {Max}]')
+    fi = [0.86199480, 0.95802009, 1.0986123, 1.2943767]
+    n = 1  # Degree of polynomial
+    x0 = 0.25
+    for n in range(1, len(xi)):
+        lagarange_val = lagarange(xi[:n + 1], fi, x0)
+        print(f'{n} degree f({x0}) = {lagarange_val}')
+        print(f'Absolute error: {abs(f.subs(x, x0).evalf() - lagarange_val)}')
+        Min, Max = error_bound(f, x, x0, xi[:n + 1])
+        print(f'Error bound: [{Min}, {Max}]')
