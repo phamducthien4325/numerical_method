@@ -117,16 +117,18 @@ if __name__ == '__main__':
     # x0 = float(input('Nhap x0: '))
     x = sp.Symbol('x')
     # f = sp.ln(sp.exp(x) + 2)
-    xi = [1.7, 1.8, 1.9, 2.0]
+    xi = [-1.0, -0.5, 0.0, 0.5]
     # fi = [f.subs(x, i).evalf() for i in xi]
-    fi = [0.3979849, 0.3399864, 0.2818186, 0.2238908]
+    fi = [0.86199480, 0.95802009, 1.0986123, 1.2943767]
     n = 1  # Degree of polynomial
-    x0 = 1.72
+    x0 = 0.43
     for n in range(1, len(xi)):
-        # newton_val = newton_backward(xi[len(xi) - n - 1:], fi[len(xi) - n - 1:], x0)
+        newton_val = newton_backward(xi[len(xi) - n - 1:], fi[len(xi) - n - 1:], x0)
+        print(f'{n} degree backward f({x0}) = {newton_val}')
         # newton_val = newton_inter(xi[:n + 1], fi[:n + 1], x0)
-        newton_val = newton_forward(xi[:n + 1], fi[:n + 1], x0)
-        print(f'{n} degree f({x0}) = {newton_val}')
+        # print(f'{n} degree inter f({x0}) = {newton_val}')
+        # newton_val = newton_forward(xi[:n + 1], fi[:n + 1], x0)
+        # print(f'{n} degree forward f({x0}) = {newton_val}')
         # print(f'Absolute error: {abs(f.subs(x, x0).evalf() - newton_val)}')
         # Min, Max = error_bound(f, x, x0, xi[:n + 1])
         # print(f'Error bound: [{Min}, {Max}]')
