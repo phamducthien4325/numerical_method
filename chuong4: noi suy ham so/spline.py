@@ -54,10 +54,10 @@ def cubic_spline(fi: list[float], k: list[float], h: float):
     return a
 
 if __name__ == '__main__':
-    k0 = 0
-    kn = -12
     xi = [0, 2, 4, 6]
-    fi = [1, 9, 41, 41]  
+    fi = [2, -2, 2, 78] 
+    k0 = 0
+    kn = 0
     n = len(xi) - 1
     k = find_k(fi, k0, kn, xi[1] - xi[0])
     a = cubic_spline(fi, k, xi[1] - xi[0])
