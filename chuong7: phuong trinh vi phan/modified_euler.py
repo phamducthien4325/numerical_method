@@ -2,7 +2,7 @@ import sympy as sp
 from scipy.optimize import minimize_scalar
 import math
 
-def euler_method(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> list[tuple[float, float]]:
+def modified_euler_method(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> list[tuple[float, float]]:
     """
     Euler's method for solving ordinary differential equations.
     
@@ -20,7 +20,10 @@ def euler_method(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> li
     result = [(xi, yi)]
     
     while xi < xn:
-        yi += h * y_prime.subs({x: xi, y: yi}).evalf()
+        k1 = y_prime.subs({x: xi, y: yi}).evalf()
+        y_star = yi + h * k1
+        k2 = y_prime.subs({x: xi + h, y: y_star}).evalf()
+        yi += h / 2 * (k1 + k2)
         xi += h
         result.append((xi, yi))
     
@@ -64,32 +67,32 @@ def find_abs_min_max(f, x, a: float, b: float):
     return min_val, max_val
 
 
-def error_bound(f, x, a: float, b: float) -> tuple[float, float]:
-    """
-    :param f: function to be integrated
-    :param x: sympy symbol for the variable
-    :param x0: point at which to evaluate the error bound
-    :param xi: list of x values for interpolation
-    :return: tuple of minimum and maximum absolute error bounds
-    """
-    f_2prime = sp.diff(f, x, 2)
-    Min, Max = find_abs_min_max(f_2prime, x, a, b)
-    Min = abs(Min)
-    Max = abs(Max)
-    if Min > Max:
-        Min, Max = Max, Min
-    return Min, Max
+# def error_bound(f, x, a: float, b: float) -> tuple[float, float]:
+#     """
+#     :param f: function to be integrated
+#     :param x: sympy symbol for the variable
+#     :param x0: point at which to evaluate the error bound
+#     :param xi: list of x values for interpolation
+#     :return: tuple of minimum and maximum absolute error bounds
+#     """
+#     f_2prime = sp.diff(f, x, 2)
+#     Min, Max = find_abs_min_max(f_2prime, x, a, b)
+#     Min = abs(Min)
+#     Max = abs(Max)
+#     if Min > Max:
+#         Min, Max = Max, Min
+#     return Min, Max
 
 if __name__ == '__main__':
     x = sp.symbols('x')
     y = sp.symbols('y')
-    y_prime = 2 / x * y + x ** 2 * sp.exp(x)
-    x0 = 1
-    xn = 2
+    y_prime = x * sp.exp(3 * x) - 2 * y
+    x0 = 0
+    xn = 1
     y0 = 0
-    h = 0.1
-    f = x ** 2 * (sp.exp(x) - math.e)
-    solution = euler_method(x0, y0, h, xn, y_prime, x, y)
+    h = 0.5
+    f = 1 / 5 * x * sp.exp(3 * x) - 1 / 25 * sp.exp(3 * x) + 1 / 25 * sp.exp(-2 * x)
+    solution = modified_euler_method(x0, y0, h, xn, y_prime, x, y)
     print("Solution using Euler's method:")
     for x_val, y_val in solution:
         print(f"x: {x_val}, y: {y_val}", end='; ')
