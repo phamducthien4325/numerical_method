@@ -15,15 +15,17 @@ def gram_schmidt(n: int, a: float, b: float, w = 1, x = sp.symbols('x')) -> list
         bi = sp.integrate(x * w * phi[i - 1] ** 2, (x, a, b)).evalf() / sp.integrate(w * phi[i - 1] ** 2, (x, a, b)).evalf()
         ci = sp.integrate(x * w * phi[i - 1] * phi[i - 2], (x, a, b)).evalf() / sp.integrate(w * phi[i - 2] ** 2, (x, a, b)).evalf()
         phi_i = (x - bi) * phi[i - 1] - ci * phi[i - 2]
-        phi.append(phi_i)
+        phi.append(sp.simplify(phi_i))
     return phi
 
 
 if __name__ == '__main__':
-    n = 3
-    a = 1
-    b = 3
-    phi = gram_schmidt(n, a, b)
+    n = 1
+    a = 0
+    b = sp.oo
+    x = sp.symbols('x')
+    w = sp.exp(-x)
+    phi = gram_schmidt(n, a, b, w, x)
     for i in range(n + 1):
         if i == 0:
             print(f'φ_{i}(x) = {phi[i]}')
