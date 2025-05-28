@@ -24,8 +24,8 @@ def fixed_point_iteration(g,
     return None
 
 def g1(x: float) -> float:
-    return  2 * math.sin(math.pi * x) - 1
+    return -2 * math.sin(math.pi * x)
 
 if __name__ == "__main__":
     print("Phuong phap diem bat dong:", end="")
-    print(fixed_point_iteration(g1, 0.25, tol=1e-7, max_iter=10000000))
+    print(fixed_point_iteration(g1, 1, tol=1e-4, max_iter=10000000))
