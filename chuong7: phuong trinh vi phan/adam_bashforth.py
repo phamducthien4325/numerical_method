@@ -6,7 +6,7 @@ def adam_bashforth1(x0: float, y0: float, h: float, xn: float, y_prime, x, y) ->
     xi = x0
     yi = y0
 
-    step = (xn - x0) / h - 0
+    step = round((xn - x0) / h)
     
     for _ in range(int(step)):
         k1 = y_prime.subs({x: xi, y: yi}).evalf()
@@ -20,7 +20,7 @@ def adam_bashforth2(x0: float, y0: float, h: float, xn: float, y_prime, x, y) ->
     yi = [init[0][1], init[1][1]]
     xi = x0 + h
 
-    step = (xn - x0) / h - 1
+    step = round((xn - x0) / h - 1)
 
     for _ in range(int(step)):
         y_tmp = yi[1] + h / 2 * (3 * y_prime.subs({x: xi, y: yi[1]}).evalf() -
@@ -37,7 +37,7 @@ def adam_bashforth3(x0: float, y0: float, h: float, xn: float, y_prime, x, y) ->
     yi = [init[0][1], init[1][1], init[2][1]]
     xi = x0 + 2 * h
 
-    step = (xn - x0) / h - 2
+    step = round((xn - x0) / h - 2)
 
     for _ in range(int(step)):
         y_tmp = yi[2] + h / 12 * (23 * y_prime.subs({x: xi, y: yi[2]}).evalf() -
@@ -55,7 +55,7 @@ def adam_bashforth4(x0: float, y0: float, h: float, xn: float, y_prime, x, y) ->
     yi = [init[0][1], init[1][1], init[2][1], init[3][1]]
     xi = x0 + 3 * h
 
-    step = (xn - x0) / h - 3
+    step = round((xn - x0) / h - 3)
 
     for _ in range(int(step)):
         y_tmp = yi[3] + h / 24 * (55 * y_prime.subs({x: xi, y: yi[3]}).evalf() -
@@ -76,12 +76,12 @@ if __name__ == '__main__':
     x = sp.symbols('x')
     y = sp.symbols('y')
     ##############################
-    y_prime = y - x ** 2 + 1
+    y_prime = -5 * y + 5 * x ** 2 + 2 * x
     x0 = 0
     xn = 1
-    y0 = 0.5
-    h = 0.2
-    # f = 1 / 5 * x * sp.exp(3 * x) - 1 / 25 * sp.exp(3 * x) + 1 / 25 * sp.exp(-2 * x)
+    y0 = 1/3
+    h = 0.1
+    f = x ** 2 + 1 / 3 * sp.exp(-5 * x)
     ############################
     ad1 = adam_bashforth1(x0, y0, h, xn, y_prime, x, y)
     ad2 = adam_bashforth2(x0, y0, h, xn, y_prime, x, y)

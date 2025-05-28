@@ -6,7 +6,7 @@ def mid_point(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> list[
     yi = y0
     result = [(xi, yi)]
 
-    step = (xn - x0) / h
+    step = round((xn - x0) / h)
     
     for _ in range(int(step)):
         y1_2 = yi + h / 2 * y_prime.subs({x: xi, y: yi}).evalf()

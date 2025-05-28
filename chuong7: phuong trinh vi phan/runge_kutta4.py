@@ -6,7 +6,7 @@ def rk4(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> list[tuple[
     yi = y0
     result = [(xi, yi)]
 
-    step = (xn - x0) / h
+    step = round((xn - x0) / h)
     
     for _ in range(int(step)):
         k1 = y_prime.subs({x: xi, y: yi}).evalf()
@@ -23,12 +23,12 @@ if __name__ == '__main__':
     x = sp.symbols('x')
     y = sp.symbols('y')
     ##############################
-    y_prime = (-x * y + 4 * x / y)
-    x0 = 0
-    xn = 1
+    y_prime = 1 + (x - y) ** 2
+    x0 = 2
+    xn = 2.4
     y0 = 1
-    h = 0.1
-    f = (4 - 3 * sp.exp(-x ** 2)) ** (1 / 2)
+    h = 0.2
+    f = x + 1 / (1 - x)
     ############################
     solution = rk4(x0, y0, h, xn, y_prime, x, y)
     print("Solution using Runge Kutta 4 method:")

@@ -6,7 +6,7 @@ def heun(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> list[tuple
     yi = y0
     result = [(xi, yi)]
 
-    step = (xn - x0) / h
+    step = round((xn - x0) / h)
     
     for _ in range(int(step)):
         y_pred = yi + h * y_prime.subs({x: xi, y: yi}).evalf()

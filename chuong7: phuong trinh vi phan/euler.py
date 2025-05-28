@@ -19,7 +19,7 @@ def euler_method(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> li
     yi = y0
     result = [(xi, yi)]
 
-    step = (xn - x0) / h
+    step = round((xn - x0) / h)
     
     for _ in range(int(step)):
         yi += h * y_prime.subs({x: xi, y: yi}).evalf()
