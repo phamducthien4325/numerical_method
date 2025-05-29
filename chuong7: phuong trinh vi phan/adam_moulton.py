@@ -5,6 +5,7 @@ from runge_kutta4 import rk4
 
 def adam_moulton4(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> float:
     init = rk4(x0, y0, h, x0 + 3 * h, y_prime, x, y)
+    result = init[:]
     yi = [init[0][1], init[1][1], init[2][1], init[3][1]]
     xi = x0 + 3 * h
 
@@ -24,8 +25,9 @@ def adam_moulton4(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> f
         yi[2] = yi[3]
         yi[3] = y_corr
         xi += h
+        result.append((xi, y_corr))
 
-    return yi[3]
+    return result
 
 
 
@@ -42,7 +44,9 @@ if __name__ == '__main__':
     ############################
     res = adam_moulton4(x0, y0, h, xn, y_prime, x, y)
     print("Solution using Adam-Moulton methods:")
-    print(f"4th order: {res}, Error: {abs(res - f.subs(x, xn).evalf())}")
+    for x_val, y_val in res:
+        print(f"x: {x_val}, y: {y_val}", end='; ')
+        print(f"Error: {abs(y_val - f.subs(x, x_val).evalf())}")
     # print(f"1st order: {ad1}")
     # print(f"2nd order: {ad2}")
     # print(f"3rd order: {ad3}")
