@@ -1,6 +1,39 @@
 import sympy as sp
 import math
 
+def rk2(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> list[tuple[float, float]]:
+    xi = x0
+    yi = y0
+    result = [(xi, yi)]
+
+    step = round((xn - x0) / h)
+
+    for _ in range(int(step)):
+        k1 = y_prime.subs({x: xi, y: yi}).evalf()
+        k2 = y_prime.subs({x: xi + h, y: yi + k1 * h}).evalf()
+        yi = yi + h / 2 * (k1 + k2)
+        xi += h
+        result.append((xi, yi))
+    
+    return result
+
+def rk3(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> list[tuple[float, float]]:
+    xi = x0
+    yi = y0
+    result = [(xi, yi)]
+
+    step = round((xn - x0) / h)
+
+    for _ in range(int(step)):
+        k1 = y_prime.subs({x: xi, y: yi}).evalf()
+        k2 = y_prime.subs({x: xi + h / 2, y: yi + h / 2 * k1}).evalf()
+        k3 = y_prime.subs({x: xi + h, y: yi - h * k1 + 2 * h * k2}).evalf()
+        yi = yi + h / 6 * (k1 + 4 * k2 + k3)
+        xi += h
+        result.append((xi, yi))
+
+    return result
+
 def rk4(x0: float, y0: float, h: float, xn: float, y_prime, x, y) -> list[tuple[float, float]]:
     xi = x0
     yi = y0
