@@ -56,11 +56,11 @@ if __name__ == '__main__':
     x = sp.symbols('x')
     y = sp.symbols('y')
     ##############################
-    y_prime = 1 + (x - y) ** 2
-    x0 = 2
-    xn = 2.4
-    y0 = 1
-    h = 0.2
+    y_prime = 4 * y - 4 * x
+    x0 = 0
+    xn = 1
+    y0 = 0
+    h = 0.5
     f = x + 1 / (1 - x)
     ############################
     solution = rk4(x0, y0, h, xn, y_prime, x, y)

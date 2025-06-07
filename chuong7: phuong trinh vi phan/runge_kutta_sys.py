@@ -28,22 +28,19 @@ def rk4_system_method(x0: float, Y0: sp.Matrix, h: float, xn: float, F, x, Ysym)
 if __name__ == '__main__':
     x = sp.symbols('x')
     ###########################################
-    x = sp.symbols('x')
     Y = sp.Matrix(sp.symbols('y1 y2'))
     F = sp.Matrix([
-        Y[0] - Y[1] + 2,
-        -Y[0] + Y[1] + 4 * x
+        Y[1],
+        4 * Y[0] - 4 * x
     ])
-    Y0 = sp.Matrix([-1, 0])
+    Y0 = sp.Matrix([0, 0])
     x0 = 0
     xn = 1
-    h = 0.1
-    actual = sp.Matrix([
-        -1 / 2 * sp.exp(2 * x) + x**2 + 2 * x - 1 / 2,
-        0.5 * sp.exp(2 * x) + x**2 - 0.5
-    ])
+    h = 0.5
+    # f = 2*x - 1/x + x**2 + x**3 - 1
+    # actual = sp.Matrix([f, sp.diff(f, x), sp.diff(f, x, 2)])
     ########################################
     result = rk4_system_method(x0, Y0, h, xn, F, x, Y)
     for xi, Yi in result:
         print(f'x = {xi}, Y = {Yi}')
-        print(f"    Error: {abs(Yi - actual.subs({x: xi}).evalf())}")
+        # print(f"    Error: {abs(Yi - actual.subs({x: xi}).evalf())}")

@@ -31,19 +31,20 @@ def adam_moulton_system_method(x0: float, Y0: sp.Matrix, h: float, xn: float, F,
 if __name__ == '__main__':
     x = sp.symbols('x')
     ###########################################
-    x = sp.symbols('x')
-    Y = sp.Matrix(sp.symbols('y1 y2'))
+    Y = sp.Matrix(sp.symbols('y1 y2 y3'))
     F = sp.Matrix([
-        Y[0] - Y[1] + 2,
-        -Y[0] + Y[1] + 4 * x
+        Y[0] + 2 * Y[1] - 2 * Y[2] + sp.exp(-x),
+        Y[1] + Y[2] - 2 * sp.exp(-x),
+        Y[0] + 2 * Y[1] + sp.exp(-x)
     ])
-    Y0 = sp.Matrix([-1, 0])
+    Y0 = sp.Matrix([3, -1, 1])
     x0 = 0
     xn = 1
     h = 0.1
     actual = sp.Matrix([
-        -1 / 2 * sp.exp(2 * x) + x**2 + 2 * x - 1 / 2,
-        0.5 * sp.exp(2 * x) + x**2 - 0.5
+        -3 * sp.exp(-x) - 3 * sp.sin(x) + 6 * sp.cos(x),
+        (3/2) * sp.exp(-x) + (3/10) * sp.sin(x) - (21/10) * sp.cos(x) - (2/5) * sp.exp(2 * x),
+        -sp.exp(-x) + (12/5) * sp.cos(x) + (9/5) * sp.sin(x) - (2/5) * sp.exp(2 * x)
     ])
     ########################################
     result = adam_moulton_system_method(x0, Y0, h, xn, F, x, Y)
