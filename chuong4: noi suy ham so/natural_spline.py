@@ -1,52 +1,77 @@
-import sys
-from pathlib import Path
-sys.path.append(str(Path(__file__).parent.parent))
-
 import numpy as np
-from chuong3 import gauss
 
-def natural_cubic_spline(x, a):
-    n = len(x) - 1  # number of intervals
-    h = [x[i + 1] - x[i] for i in range(n)]
+def cubic_spline_coefficients(x, y):
+    """
+    Tính hệ số spline bậc ba cho các điểm (x, y)
+    Trả về các mảng b, c, d sao cho
+    với mỗi đoạn [x[i], x[i+1]], spline là:
+    S_i(x) = y[i] + b[i]*(x - x[i]) + c[i]*(x - x[i])^2 + d[i]*(x - x[i])^3
+    """
+    n = len(x)
+    h = np.diff(x)
 
-    # Step 2: compute alpha
-    alpha = [0] * n
-    for i in range(1, n):
-        alpha[i] = (3 / h[i]) * (a[i + 1] - a[i]) - (3 / h[i - 1]) * (a[i] - a[i - 1])
+    # Tính alpha theo công thức spline
+    alpha = [0] + [3 * ((y[i+1]-y[i])/h[i] - (y[i]-y[i-1])/h[i-1]) for i in range(1, n-1)]
 
-    # Step 3: initialize l, mu, z
-    l = [1] + [0] * n
-    mu = [0] * (n + 1)
-    z = [0] * (n + 1)
+    # Khởi tạo các mảng hỗ trợ
+    l = np.ones(n)
+    mu = np.zeros(n)
+    z = np.zeros(n)
 
-    # Step 4: forward sweep
-    for i in range(1, n):
-        l[i] = 2 * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1]
-        mu[i] = h[i] / l[i]
-        z[i] = (alpha[i] - h[i - 1] * z[i - 1]) / l[i]
+    # Giải hệ phương trình tam giác để tìm c
+    for i in range(1, n-1):
+        l[i] = 2*(x[i+1] - x[i-1]) - h[i-1]*mu[i-1]
+        mu[i] = h[i]/l[i]
+        z[i] = (alpha[i] - h[i-1]*z[i-1]) / l[i]
 
-    # Step 5: set last values
-    l[n] = 1
-    z[n] = 0
-    c = [0] * (n + 1)
-    b = [0] * n
-    d = [0] * n
+    b = np.zeros(n-1)
+    c = np.zeros(n)
+    d = np.zeros(n-1)
 
-    # Step 6: backward sweep
-    for j in range(n - 1, -1, -1):
-        c[j] = z[j] - mu[j] * c[j + 1]
-        b[j] = (a[j + 1] - a[j]) / h[j] - h[j] * (c[j + 1] + 2 * c[j]) / 3
-        d[j] = (c[j + 1] - c[j]) / (3 * h[j])
+    # Tính b, c, d từ dưới lên
+    for j in range(n-2, -1, -1):
+        c[j] = z[j] - mu[j]*c[j+1]
+        b[j] = (y[j+1] - y[j])/h[j] - h[j]*(c[j+1] + 2*c[j])/3
+        d[j] = (c[j+1] - c[j]) / (3*h[j])
 
-    # Step 7: output
-    return [(a[j], b[j], c[j], d[j]) for j in range(n)]
+    return b, c, d
 
+def print_cubic_spline(x, y, b, c, d):
+    """
+    In từng đoạn spline dưới dạng hàm bậc ba:
+    S_i(x) = y[i] + b[i]*(x - x[i]) + c[i]*(x - x[i])^2 + d[i]*(x - x[i])^3
+    """
+    n = len(x)
+    for i in range(n-1):
+        print(f"Đoạn [{x[i]}, {x[i+1]}]: S_{i}(x) = {y[i]:.4f} + {b[i]:.4f}*(x - {x[i]:.4f}) + "
+              f"{c[i]:.4f}*(x - {x[i]:.4f})^2 + {d[i]:.4f}*(x - {x[i]:.4f})^3")
+        print()
 
-if __name__ == '__main__':
-    xi = [0, 2, 4, 6]
-    fi = [2, -2, 2, 78] 
-    n = len(xi) - 1
-    a = cubic_spline(fi, k, xi[1] - xi[0])
-    print('Cac he so cua spline cubic la:')
-    for i in range(len(a)):
-        print(f'a[{i}] = {a[i]}')
+# Hàm đánh giá giá trị của spline tại các điểm mới
+# x_new là mảng các điểm cần đánh giá
+def spline_evaluate(x, y, b, c, d, x_new):
+    n = len(x)
+    y_new = np.zeros_like(x_new)
+    for idx, xi in enumerate(x_new):
+        # tìm đoạn spline chứa xi
+        i = np.searchsorted(x, xi) - 1
+        if i < 0:
+            i = 0
+        elif i >= n-1:
+            i = n-2
+        dx = xi - x[i]
+        y_new[idx] = y[i] + b[i]*dx + c[i]*dx**2 + d[i]*dx**3
+    return y_new
+
+if __name__ == "__main__":
+    x = np.array([0, 2, 4, 6])
+    y = np.array([1, 9, 41, 41])
+
+    b, c, d = cubic_spline_coefficients(x, y)
+    print_cubic_spline(x, y, b, c, d)
+
+    test_points = [0.5, 1.5, 2.5, 3.5]
+    y_test = spline_evaluate(x, y, b, c, d, test_points)
+    print("Giá trị của spline tại các điểm mới:")
+    for xi, yi in zip(test_points, y_test):
+        print(f"Spline({xi}) = {yi:.4f}")

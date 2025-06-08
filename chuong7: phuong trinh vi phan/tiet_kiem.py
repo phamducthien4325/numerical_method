@@ -64,14 +64,14 @@ if __name__ == '__main__':
     yp , y = sp.symbols("y' y")
     x = sp.symbols("x")
     ###########################################
-    px = -4 * x**-1
-    qx = -2 * x**-2
-    rx = 2 * x**-2 * sp.ln(x)
-    a = 1
-    b = 2
-    y0 = -1/2
-    yn = math.log(2)
-    h = 0.05
+    px = -(x + 1)
+    qx = 2
+    rx = (1 - x ** 2) * sp.exp(-x)
+    a = 0
+    b = 1
+    y0 = -1
+    yn = 0
+    h = 0.1
     ########################################
     px, qx, rx = sp.sympify(px), sp.sympify(qx), sp.sympify(rx)
     ypp = px * yp + qx * y + rx

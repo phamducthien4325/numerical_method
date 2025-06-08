@@ -12,10 +12,10 @@ def orthogonal(n: int, a: float, b: float, f, phi, w = 1, x = sp.symbols('x')):
 
 if __name__ == '__main__':
     x = sp.symbols('x')
-    f = sp.exp(-2 * x)
-    w = sp.exp(-x)
+    f = x ** 2 + 3 * x + 2
+    w = 1
     a = 0
-    b = sp.oo
+    b = 1
     n = 1
     for n in range(1, 4):
         phi = gram_schmidt(n, a, b, w, x)
